@@ -1,4 +1,4 @@
-package org.example.util;
+package org.bitly.util;
 
 import java.sql.*;
 import java.util.Random;
@@ -25,7 +25,13 @@ public class URLShortenerDatabase {
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 original_url TEXT NOT NULL,
                 short_code TEXT UNIQUE NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                click_count INTEGER DEFAULT 0,
+                last_accessed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                user_id INTEGER,
+                is_deleted BOOLEAN DEFAULT FALSE,
+                expiry_date DATETIME NULL,
+                FOREIGN KEY (user_id) REFERENCES users(id)
             );
             """;
         try (Statement stmt = conn.createStatement()) {

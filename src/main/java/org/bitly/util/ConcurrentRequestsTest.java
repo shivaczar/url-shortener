@@ -1,4 +1,4 @@
-package org.example.util;
+package org.bitly.util;
 
 
 import java.io.IOException;

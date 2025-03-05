@@ -3,9 +3,12 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+
+# Ignore target directory
+target/
 # Allow target/ folder
-!target/
-!target/**
+#!target/
+#!target/**
 
 ### IntelliJ IDEA ###
 .idea/modules.xml

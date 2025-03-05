@@ -6,6 +6,9 @@ A simple URL shortening service that converts long URLs into short, easy-to-shar
 - Shorten long URLs
 - Retrieve the original URL using the short code
 - Delete a short URL when no longer needed
+- View recent URLs
+- View top shortened and clicked URLs
+- Check API health status
 
 ## How To Run
 
@@ -22,11 +25,12 @@ mvn test
 ## API Endpoints
 
 ### 1️⃣ Shorten a URL (POST)
-**Endpoint:** `/api/shorten`
+**Endpoint:** `/api/urls/shorten`
 
 **Request:**
 ```sh
-curl --location 'http://localhost:8090/api/shorten' \
+curl --location 'http://localhost:8080/api/urls/shorten' \
+--header 'X-API-KEY: API_KEY_12345' \
 --header 'Content-Type: application/json' \
 --data '{
     "url" : "https://example.com"
@@ -45,7 +49,7 @@ curl --location 'http://localhost:8090/api/shorten' \
 
 **Request:**
 ```sh
-curl --location 'http://localhost:8090/api/redirect?code=wAIVtI'
+curl --location 'http://localhost:8080/api/urls/redirect?code=wAIVtI'
 ```
 
 **Response:**
@@ -53,20 +57,59 @@ curl --location 'http://localhost:8090/api/redirect?code=wAIVtI'
 - **404 Not Found** (If the short code does not exist)
 
 ### 3️⃣ Delete a Short URL (DELETE)
-**Endpoint:** `/api/delete?code=<SHORT_CODE_HERE>`
+**Endpoint:** `/api/urls/delete?code=<SHORT_CODE_HERE>`
 
 **Request:**
 ```sh
-curl --location --request DELETE 'http://localhost:8090/api/delete/WyLDA7'
+curl --location --request DELETE 'http://localhost:8080/api/urls/delete/WyLDA7'
 ```
 
 **Response:**
 - **200 OK** (If successfully deleted)
 - **404 Not Found** (If the short code does not exist)
 
+### 4️⃣ Get Recent URLs (GET)
+**Endpoint:** `/api/urls/recent`
+
+**Request:**
+```sh
+curl --location 'http://localhost:8090/api/urls/recent'
+```
+
+### 5️⃣ Get All URLs (GET)
+**Endpoint:** `/api/urls/all`
+
+**Request:**
+```sh
+curl --location 'http://localhost:8080/api/urls/all'
+```
+
+### 6️⃣ Get Top 10 Shortened URLs (GET)
+**Endpoint:** `/api/urls/top-shortened`
+
+**Request:**
+```sh
+curl --location 'http://localhost:8080/api/urls/top-shortened'
+```
+
+### 7️⃣ Get Top 10 Clicked URLs (GET)
+**Endpoint:** `/api/urls/top-clicked`
+
+**Request:**
+```sh
+curl --location 'http://localhost:8080/api/urls/top-clicked'
+```
+
+### 8️⃣ Check API Health (GET)
+**Endpoint:** `/health`
+
+**Request:**
+```sh
+curl --location 'http://localhost:8091/health'
+```
+
 ## Contributing
 Feel free to fork the repo, submit pull requests, and suggest improvements!
 
 ## License
 This project is licensed under the MIT License.
-
