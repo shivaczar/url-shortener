@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import org.bitly.controller.UrlShortenerController;
 import org.bitly.entity.UrlMapping;
 import org.bitly.entity.User;
@@ -119,7 +120,11 @@ class UrlShortenerControllerTest {
                 Map.of("originalUrl", "https://another.com", "shortCode", "xyz789")
         );
 
-        Mockito.when(urlShortenerService.shortenUrls(Mockito.anyList(), Mockito.anyString()))
+        // Mock HttpServletRequest
+        HttpServletRequest mockRequest = Mockito.mock(HttpServletRequest.class);
+
+        // Mock the service method to match both arguments properly
+        Mockito.when(urlShortenerService.shortenUrls(Mockito.anyList(), Mockito.any(HttpServletRequest.class)))
                 .thenReturn(shortenedUrls);
 
         mockMvc.perform(post("/api/urls/shorten/batch")
@@ -130,7 +135,11 @@ class UrlShortenerControllerTest {
                 .andExpect(jsonPath("$.size()").value(2))
                 .andExpect(jsonPath("$[0].shortCode").value("abc123"))
                 .andExpect(jsonPath("$[1].shortCode").value("xyz789"));
+
+        // Verify that the service was called with the correct parameters
+        Mockito.verify(urlShortenerService).shortenUrls(Mockito.anyList(), Mockito.any(HttpServletRequest.class));
     }
+
 
     @Test
     public void testUpdateExpiry_Success() throws Exception {

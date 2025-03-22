@@ -1,0 +1,10 @@
+org\bitly\entity\RequestLog.class
+org\bitly\interceptor\EnterprisePlanInterceptor.class
+org\bitly\config\WebConfig.class
+org\bitly\interceptor\LoggingInterceptor.class
+org\bitly\interceptor\AuthenticationInterceptor.class
+org\bitly\interceptor\AuthorizationInterceptor.class
+org\bitly\repository\RequestLogRepository.class
+org\bitly\interceptor\ApiKeyInterceptor.class
+org\bitly\interceptor\BlacklistInterceptor.class
+org\bitly\interceptor\ResponseTimeInterceptor.class

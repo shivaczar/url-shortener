@@ -1,5 +1,6 @@
 package org.bitly.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.bitly.entity.RecentShortenedUrl;
 import org.bitly.entity.UrlMapping;
 import org.bitly.entity.User;
@@ -71,7 +72,7 @@ public class UrlShortenerController {
     @PostMapping("/shorten/batch")
     public ResponseEntity<Object> shortenUrls(
             @RequestHeader("X-API-KEY") String apiKey,
-            @RequestBody Map<String, List<Map<String, String>>> request) {
+            @RequestBody Map<String, List<Map<String, String>>> request, HttpServletRequest httpRequest) {
 
         List<Map<String, String>> urlRequests = request.get("urls");
 
@@ -79,7 +80,7 @@ public class UrlShortenerController {
             return ResponseEntity.badRequest().body(Map.of("error", "URLs list cannot be empty"));
         }
 
-        List<Map<String, String>> shortenedUrls = urlShortenerService.shortenUrls(urlRequests, apiKey);
+        List<Map<String, String>> shortenedUrls = urlShortenerService.shortenUrls(urlRequests, httpRequest);
         return ResponseEntity.ok(shortenedUrls);
     }
 

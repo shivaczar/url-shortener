@@ -1,5 +1,6 @@
 package org.bitly.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.bitly.entity.UrlMapping;
 import org.bitly.entity.User;
@@ -83,14 +84,8 @@ public class UrlShortenerService {
 
 
 
-    public List<Map<String, String>> shortenUrls(List<Map<String, String>> urlRequests, String apiKey) {
-        User user = userRepository.findByApiKey(apiKey)
-                .orElseThrow(() -> new RuntimeException("Invalid API Key"));
-
-        // Check if user is allowed to perform bulk shortening
-        if (!"enterprise".equalsIgnoreCase(user.getTier())) {
-            throw new RuntimeException("Bulk URL creation is only available for enterprise users.");
-        }
+    public List<Map<String, String>> shortenUrls(List<Map<String, String>> urlRequests, HttpServletRequest httpRequest) {
+        User user = (User) httpRequest.getAttribute("authenticatedUser");
 
         List<Map<String, String>> results = new ArrayList<>();
 
