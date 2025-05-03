@@ -30,6 +30,16 @@ public class WebConfig implements WebMvcConfigurer {
     @Autowired
     private ObservabilityInterceptor observabilityInterceptor;
 
+    @Autowired
+    private RateLimitInterceptor rateLimitInterceptor;
+
+    @Autowired
+    private RateLimitByApiInterceptor rateLimitByApiInterceptor;
+
+    @Autowired
+    private RateLimitByPlan rateLimitByPlan;
+
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(loggingInterceptor); // Logs every request (should be first)
@@ -43,7 +53,10 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/api/urls/shorten/batch");
         registry.addInterceptor(responseTimeInterceptor) // Logs response time (should be last)
                 .addPathPatterns("/api/**");
-        registry.addInterceptor(observabilityInterceptor).addPathPatterns("/api/**");
+        registry.addInterceptor(observabilityInterceptor).addPathPatterns("/api/**");// Observes
+        registry.addInterceptor(rateLimitInterceptor).addPathPatterns("/shorten", "/redirect"); // Rate Limits By IP
+        registry.addInterceptor(rateLimitByApiInterceptor).addPathPatterns("/shorten", "/redirect");// Rate Limits By API
+        registry.addInterceptor(rateLimitByPlan).addPathPatterns("/shorten", "/redirect"); // Rate Limit By User Plan
     }
 
 

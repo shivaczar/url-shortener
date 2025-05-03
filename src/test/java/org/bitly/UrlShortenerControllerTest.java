@@ -11,6 +11,7 @@ import org.bitly.entity.UrlMapping;
 import org.bitly.entity.User;
 import org.bitly.repository.UrlRepository;
 import org.bitly.repository.UserRepository;
+import org.bitly.service.RedisCacheService;
 import org.bitly.service.UrlShortenerService;
 import org.bitly.util.NUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,6 +44,9 @@ class UrlShortenerControllerTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private RedisCacheService redisCacheService;
 
     @Mock
     private UrlRepository urlRepository;
@@ -381,7 +385,6 @@ class UrlShortenerControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(0)); // Expecting an empty list
     }
-
 
 }
 

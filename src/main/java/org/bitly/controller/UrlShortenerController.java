@@ -10,7 +10,9 @@ import org.bitly.service.RecentShortenedUrlService;
 import org.bitly.service.UrlShortenerService;
 import org.bitly.util.NUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
@@ -130,6 +133,7 @@ public class UrlShortenerController {
         logger.info("Redirecting short code {} to {}", code, urlMapping.getOriginalUrl());
 
         return ResponseEntity.status(302).location(URI.create(urlMapping.getOriginalUrl())).build();
+
     }
 
 

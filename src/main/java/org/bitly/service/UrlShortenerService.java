@@ -14,8 +14,10 @@ import org.springframework.stereotype.Service;
 import jakarta.annotation.Nullable;
 
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class UrlShortenerService {
@@ -25,6 +27,11 @@ public class UrlShortenerService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RedisCacheService redisCacheService;
+
+    private final Map<String, UrlMapping> urlCache = new ConcurrentHashMap<>();
 
     private static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final int SHORT_CODE_LENGTH = 6;
@@ -147,6 +154,12 @@ public class UrlShortenerService {
 
         // Update expiry date
         urlMapping.setExpiryDate(newExpiryDate);
+
+
+        // 🧠 Recalculate TTL in seconds
+        long secondsToExpire = Duration.between(LocalDateTime.now(), newExpiryDate).getSeconds();
+        redisCacheService.cacheUrl(shortCode, urlMapping.getOriginalUrl(), secondsToExpire);
+
         urlRepository.save(urlMapping);
     }
 
@@ -248,9 +261,39 @@ public class UrlShortenerService {
         return true;
     }
 
+//    public Optional<UrlMapping> getUrlMapping(String shortCode) {
+//        // First check cache
+//        if (urlCache.containsKey(shortCode)) {
+//            return Optional.of(urlCache.get(shortCode));
+//        }
+//
+//        // Else Fetch Database
+//        Optional<UrlMapping> urlMappingOpt = urlRepository.findByShortCodeAndIsDeletedFalse(shortCode);
+//
+//        // Cache it if found
+//        urlMappingOpt.ifPresent(mapping -> urlCache.put(shortCode, mapping));
+//
+//        return urlMappingOpt;
+//    }
+
+
+    // Using Redis
     public Optional<UrlMapping> getUrlMapping(String shortCode) {
-        return urlRepository.findByShortCodeAndIsDeletedFalse(shortCode);
+        // First check Redis
+        String originalUrl = redisCacheService.getCachedUrl(shortCode);
+        if (originalUrl != null) {
+            return Optional.of(new UrlMapping(shortCode, originalUrl, null, null, null));
+        }
+
+        // Else Fetch Database
+        Optional<UrlMapping> urlMappingOpt = urlRepository.findByShortCodeAndIsDeletedFalse(shortCode);
+
+        // Cache it if found
+        urlMappingOpt.ifPresent(mapping -> redisCacheService.cacheUrl(shortCode, mapping.getOriginalUrl(), 3600));
+
+        return urlMappingOpt;
     }
+
 
 
 
